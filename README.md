@@ -88,6 +88,21 @@ Add to your Gemini settings (`~/.gemini/settings.json`):
 }
 ```
 
+### Configure with Cursor
+
+Add to your Cursor MCP settings (`.cursor/mcp.json` in your project or global config):
+
+```json
+{
+  "mcpServers": {
+    "gbp-photo-geotag": {
+      "command": "node",
+      "args": ["/path/to/gbp-photo-geotag-mcp/dist/index.js"]
+    }
+  }
+}
+```
+
 ---
 
 ## 📋 Step-by-Step Usage Guide
