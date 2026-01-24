@@ -48,7 +48,7 @@ choco install exiftool
 
 ```bash
 # Clone the repository
-git clone https://github.com/boostbusinessai/gbp-photo-geotag-mcp.git
+git clone https://github.com/antongulin/gbp-photo-geotag-mcp.git
 cd gbp-photo-geotag-mcp
 
 # Install dependencies
@@ -86,6 +86,33 @@ Add to your Gemini settings (`~/.gemini/settings.json`):
     }
   }
 }
+```
+
+---
+
+## 📋 Step-by-Step Usage Guide
+
+### Step 1: Prepare Your Data
+
+You'll need:
+- **Photo file path** - Absolute path to your image (e.g., `/Users/you/photos/storefront.jpg`)
+- **Business address** - Your business location (e.g., `123 Main St, Seattle, WA 98101`)
+- **Business name** - For copyright/creator fields (e.g., `Acme Plumbing`)
+- **Keywords** (optional) - SEO keywords like `["plumber", "seattle", "water heater"]`
+
+### Step 2: Use with AI Assistant
+
+Once configured, ask your AI assistant:
+
+> "Geotag my photo at /Users/me/photos/job-site.jpg with address 123 Main St, Seattle, WA for my business Acme Plumbing"
+
+The AI will call the `add_geotag` tool automatically.
+
+### Step 3: Verify the Result
+
+Check metadata was written:
+```bash
+exiftool -a -G /path/to/your/photo.jpg | grep -E "GPS|City|Artist|Copyright"
 ```
 
 ---
