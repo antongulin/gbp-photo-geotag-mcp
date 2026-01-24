@@ -24,6 +24,16 @@ An open-source [Model Context Protocol (MCP)](https://modelcontextprotocol.io) s
 | 🔤 **SEO Renaming** | Rename files to `business-name-service-city-state.jpg` format |
 | 🔄 **Backup Support** | Automatically creates backups before modifying files |
 
+### Supported File Formats
+
+| Format | Extension | GPS Writing |
+|--------|-----------|-------------|
+| JPEG | `.jpg`, `.jpeg` | ✅ Full support |
+| PNG | `.png` | ✅ Full support |
+| TIFF | `.tiff`, `.tif` | ✅ Full support |
+| HEIC | `.heic` | ✅ Full support |
+| WebP | `.webp` | ✅ Full support |
+
 ---
 
 ## 🚀 Quick Start
