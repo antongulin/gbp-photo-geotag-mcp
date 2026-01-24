@@ -1,0 +1,57 @@
+{
+  "name": "gbp-photo-geotag-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for adding geotag and location metadata to photos for Google Business Profile SEO optimization",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "gbp-photo-geotag-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "geotag",
+    "geotagging",
+    "exif",
+    "metadata",
+    "google-business-profile",
+    "gbp",
+    "local-seo",
+    "image-optimization",
+    "photo-metadata",
+    "gps",
+    "iptc",
+    "xmp"
+  ],
+  "author": "Boost Business AI",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antongulin/gbp-photo-geotag-mcp.git"
+  },
+  "homepage": "https://github.com/antongulin/gbp-photo-geotag-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/antongulin/gbp-photo-geotag-mcp/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0"
+  }
+}
