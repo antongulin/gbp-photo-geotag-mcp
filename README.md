@@ -1,278 +1,387 @@
-# 📍 GBP Photo Geotag MCP
+# 📍 GBP Photo Geotag
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-blue)](https://modelcontextprotocol.io)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org)
+[![Trigger.dev](https://img.shields.io/badge/Trigger.dev-Cloud%20Hosted-6366f1)](https://trigger.dev)
 
-> **Add GPS coordinates and location metadata to photos for Google Business Profile SEO optimization**
+> **Add GPS coordinates and location metadata to your photos — boost your Google Business Profile with geotagged images.**
 
-An open-source [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that helps local businesses optimize their photos with geolocation data for better visibility on Google Maps and local search results.
+Geotagging adds invisible location data to your photos. When you upload these photos to Google Business Profile, Google Maps, or your website, search engines can see exactly where your business is located. This helps your business show up in local search results and Google Maps.
 
-**Created by [Boost Business AI](https://boostbusiness.ai)** - Custom AI solutions for local businesses.
+**Created by [Boost Business AI](https://boostbusiness.ai)** — Custom AI solutions for local businesses.
 
 ---
 
-## ✨ Features
+## 🚀 Three Ways to Use
 
-| Feature | Description |
-|---------|-------------|
-| 📍 **Auto-Geocoding** | Convert any street address to GPS coordinates using OpenStreetMap (free, no API key) |
-| 🗺️ **GPS Metadata** | Write EXIF GPS coordinates (latitude, longitude, altitude) |
-| 🏢 **IPTC Location** | Add City, State, Country, and Sublocation fields |
-| 📝 **XMP Metadata** | Include Creator, Rights, and Keywords |
-| 📂 **Batch Processing** | Geotag entire folders of photos at once |
-| 🔤 **SEO Renaming** | Rename files to `business-name-service-city-state.jpg` format |
-| 🔄 **Backup Support** | Automatically creates backups before modifying files |
+Choose the option that works best for you:
+
+| #   | Option                                                         | Best For                                               | What You Need         |
+| --- | -------------------------------------------------------------- | ------------------------------------------------------ | --------------------- |
+| 🌐  | **[Web App](#-option-1-web-app-easiest)**                      | Anyone — no technical skills needed                    | Just a web browser    |
+| 🤖  | **[MCP for AI Agents](#-option-2-mcp-for-ai-agents)**          | People who use AI assistants like Claude, Cursor, etc. | An AI agent + API key |
+| 💻  | **[Download & Run Locally](#-option-3-download--run-locally)** | Developers who want full control                       | Node.js + ExifTool    |
+
+---
+
+## 🌐 Option 1: Web App (Easiest)
+
+**No downloads. No setup. Just open and use.**
+
+### 👉 [Open the Web App](https://resilient-tiramisu-8ae64a.netlify.app)
+
+### How to Use
+
+1. **Open** the link above in your browser
+2. **Upload** your photo (drag & drop or click to browse)
+3. **See current metadata** — the app instantly scans your photo and shows what location data already exists (if any)
+4. **Enter your business address** (e.g., `123 Main Street, Seattle, WA 98101`)
+5. **Add business info** (optional) — business name, SEO keywords, copyright
+6. **Click "Geotag & Download Photo"**
+7. **Done!** Your geotagged photo downloads automatically with a Before/After comparison showing exactly what changed
+
+### Features
+
+- 🌓 **Dark & Light theme** — toggle in the top-right corner
+- 📊 **Before/After comparison** — see exactly what metadata was added
+- 📱 **Works on mobile** — use from your phone or tablet
+- 🔒 **Private** — your photos are processed and not stored anywhere
 
 ### Supported File Formats
 
-| Format | Extension | GPS Writing |
-|--------|-----------|-------------|
-| JPEG | `.jpg`, `.jpeg` | ✅ Full support |
-| PNG | `.png` | ✅ Full support |
-| TIFF | `.tiff`, `.tif` | ✅ Full support |
-| HEIC | `.heic` | ✅ Full support |
-| WebP | `.webp` | ✅ Full support |
+| Format | Extensions      |
+| ------ | --------------- |
+| JPEG   | `.jpg`, `.jpeg` |
+| PNG    | `.png`          |
+| TIFF   | `.tiff`, `.tif` |
+| WebP   | `.webp`         |
+| HEIC   | `.heic`         |
 
 ---
 
-## 🚀 Quick Start
+## 🤖 Option 2: MCP for AI Agents
 
-### Prerequisites
+If you use an AI assistant (like Claude, Cursor, VS Code Copilot, Windsurf, or Gemini), you can add this tool directly to your AI agent. Then just ask your AI in plain English to geotag your photos — it handles everything automatically.
 
-1. **Node.js 18+** - [Download](https://nodejs.org)
-2. **ExifTool** - Required for metadata operations
+### What is MCP?
+
+[MCP (Model Context Protocol)](https://modelcontextprotocol.io) is a standard that lets AI assistants use external tools. By adding this MCP server to your AI agent, your AI gains the ability to geotag photos, look up GPS coordinates, and more — all through natural conversation.
+
+### Available Tools
+
+Your AI agent gets access to these tools:
+
+| Tool                      | What It Does                                                                       |
+| ------------------------- | ---------------------------------------------------------------------------------- |
+| **Geocode Address**       | Converts any address to GPS coordinates (e.g., "123 Main St" → latitude/longitude) |
+| **Reverse Geocode**       | Converts GPS coordinates to a readable address                                     |
+| **Geotag Photo**          | Adds GPS, business info, and SEO data to a photo                                   |
+| **Generate SEO Filename** | Creates search-optimized filenames (e.g., `acme-plumbing-seattle-wa.jpg`)          |
+| **Read Geotag**           | Shows what location data a photo already contains                                  |
+
+### Get Your API Key
+
+To use MCP, you'll need a free API key. **Request one here:**
+
+- 📧 **Email:** [anton@boostbusiness.ai](mailto:anton@boostbusiness.ai)
+- 🌐 **Website:** [boostbusiness.ai](https://boostbusiness.ai)
+- 💬 **GitHub:** [Request access](https://github.com/antongulin/gbp-photo-geotag-mcp/issues/new?template=access_request.md&title=Cloud+MCP+Access+Request)
+
+### Setup Instructions
+
+Once you have your API key, follow the instructions for your AI agent:
+
+<details>
+<summary><strong>Claude Desktop</strong> (click to expand)</summary>
+
+1. Open Claude Desktop
+2. Go to **Settings → Developer → Edit Config**
+3. Add this to the config file:
+
+```json
+{
+  "mcpServers": {
+    "gbp-photo-geotag": {
+      "command": "npx",
+      "args": ["-y", "gbp-photo-geotag-mcp@latest", "start:client"],
+      "env": {
+        "GBP_GEOTAG_API_KEY": "YOUR_API_KEY_HERE"
+      }
+    }
+  }
+}
+```
+
+4. Replace `YOUR_API_KEY_HERE` with the key you received
+5. Restart Claude Desktop
+
+**Config file location:**
+
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
+</details>
+
+<details>
+<summary><strong>Cursor</strong> (click to expand)</summary>
+
+1. Create a file called `mcp.json` in your project's `.cursor` folder (or `~/.cursor/mcp.json` for global access)
+2. Add this content:
+
+```json
+{
+  "mcpServers": {
+    "gbp-photo-geotag": {
+      "command": "npx",
+      "args": ["-y", "gbp-photo-geotag-mcp@latest", "start:client"],
+      "env": {
+        "GBP_GEOTAG_API_KEY": "YOUR_API_KEY_HERE"
+      }
+    }
+  }
+}
+```
+
+3. Replace `YOUR_API_KEY_HERE` with the key you received
+4. Restart Cursor
+
+</details>
+
+<details>
+<summary><strong>VS Code (Copilot)</strong> (click to expand)</summary>
+
+1. Create a file called `mcp.json` in your project's `.vscode` folder
+2. Add this content:
+
+```json
+{
+  "servers": {
+    "gbp-photo-geotag": {
+      "command": "npx",
+      "args": ["-y", "gbp-photo-geotag-mcp@latest", "start:client"],
+      "env": {
+        "GBP_GEOTAG_API_KEY": "YOUR_API_KEY_HERE"
+      }
+    }
+  }
+}
+```
+
+3. Replace `YOUR_API_KEY_HERE` with the key you received
+4. Restart VS Code
+
+</details>
+
+<details>
+<summary><strong>Windsurf</strong> (click to expand)</summary>
+
+1. Open or create the file `~/.codeium/windsurf/mcp_config.json`
+2. Add this content:
+
+```json
+{
+  "mcpServers": {
+    "gbp-photo-geotag": {
+      "command": "npx",
+      "args": ["-y", "gbp-photo-geotag-mcp@latest", "start:client"],
+      "env": {
+        "GBP_GEOTAG_API_KEY": "YOUR_API_KEY_HERE"
+      }
+    }
+  }
+}
+```
+
+3. Replace `YOUR_API_KEY_HERE` with the key you received
+4. Restart Windsurf
+
+</details>
+
+<details>
+<summary><strong>Gemini CLI</strong> (click to expand)</summary>
+
+1. Open or create the file `~/.gemini/settings.json`
+2. Add this content:
+
+```json
+{
+  "mcpServers": {
+    "gbp-photo-geotag": {
+      "command": "npx",
+      "args": ["-y", "gbp-photo-geotag-mcp@latest", "start:client"],
+      "env": {
+        "GBP_GEOTAG_API_KEY": "YOUR_API_KEY_HERE"
+      }
+    }
+  }
+}
+```
+
+3. Replace `YOUR_API_KEY_HERE` with the key you received
+4. Restart Gemini CLI
+
+</details>
+
+### Example: What to Say to Your AI
+
+Once everything is set up, just talk to your AI agent in plain English:
+
+> _"Geotag the photo at https://example.com/storefront.jpg with our business address 456 Oak Ave, Temecula, CA. Our business name is Acme Plumbing. Add keywords: plumber, temecula, emergency repair."_
+
+> _"What GPS data does the image at https://example.com/photo.jpg have?"_
+
+> _"Generate an SEO filename for our water heater installation photo in Seattle, WA for Acme Plumbing."_
+
+> _"Look up the GPS coordinates for 1600 Amphitheatre Parkway, Mountain View, CA."_
+
+---
+
+## 💻 Option 3: Download & Run Locally
+
+For full control, you can download this project and run everything on your own computer. This mode works with local image files and doesn't need an internet connection for processing (only for geocoding addresses).
+
+### What You'll Need
+
+1. **Node.js 18 or later** — [Download here](https://nodejs.org) (choose the "LTS" version)
+2. **ExifTool** — A free tool for reading/writing photo metadata
+
+**Install ExifTool:**
 
 ```bash
-# macOS
+# macOS (using Homebrew)
 brew install exiftool
 
-# Ubuntu/Debian
+# Ubuntu/Debian Linux
 sudo apt-get install exiftool
 
-# Windows (via Chocolatey)
+# Windows (using Chocolatey)
 choco install exiftool
 ```
 
 ### Installation
 
+1. [Download this project as a ZIP](https://github.com/antongulin/gbp-photo-geotag-mcp/archive/refs/heads/main.zip) or clone it:
+
 ```bash
-# Clone the repository
 git clone https://github.com/antongulin/gbp-photo-geotag-mcp.git
+```
+
+2. Open a terminal in the project folder and run:
+
+```bash
 cd gbp-photo-geotag-mcp
-
-# Install dependencies
 npm install
-
-# Build
 npm run build
 ```
 
-### Configure with Claude Desktop
+### Connect to Your AI Agent
 
-Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
-
-```json
-{
-  "mcpServers": {
-    "gbp-photo-geotag": {
-      "command": "node",
-      "args": ["/path/to/gbp-photo-geotag-mcp/dist/index.js"]
-    }
-  }
-}
-```
-
-### Configure with Gemini CLI
-
-Add to your Gemini settings (`~/.gemini/settings.json`):
+Add this to your AI agent's MCP config (see the [MCP section above](#setup-instructions) for where to find the config file):
 
 ```json
 {
   "mcpServers": {
     "gbp-photo-geotag": {
       "command": "node",
-      "args": ["/path/to/gbp-photo-geotag-mcp/dist/index.js"]
+      "args": ["/full/path/to/gbp-photo-geotag-mcp/dist/index.js"]
     }
   }
 }
 ```
 
-### Configure with Cursor
+> ⚠️ **Important:** Replace `/full/path/to/` with the actual path where you downloaded the project.
 
-Add to your Cursor MCP settings (`.cursor/mcp.json` in your project or global config):
+### Local Tools
 
-```json
-{
-  "mcpServers": {
-    "gbp-photo-geotag": {
-      "command": "node",
-      "args": ["/path/to/gbp-photo-geotag-mcp/dist/index.js"]
-    }
-  }
-}
+When running locally, your AI agent gets these additional tools:
+
+| Tool                | What It Does                                    |
+| ------------------- | ----------------------------------------------- |
+| **Add Geotag**      | Add GPS and location data to a local photo file |
+| **Batch Geotag**    | Process all photos in a folder at once          |
+| **Rename for SEO**  | Rename files to search-friendly format          |
+| **Read Geotag**     | Check what location data a photo already has    |
+| **Geocode Address** | Look up GPS coordinates for any address         |
+| **Reverse Geocode** | Get address from GPS coordinates                |
+
+---
+
+## 📊 What Metadata Gets Added to Your Photos?
+
+When you geotag a photo, we embed the following invisible data:
+
+| Category         | What's Added                                        |
+| ---------------- | --------------------------------------------------- |
+| **GPS**          | Exact latitude, longitude, and altitude coordinates |
+| **Location**     | City, State, Country, and specific location name    |
+| **Business**     | Your business name as the photo artist/creator      |
+| **Copyright**    | Copyright notice with your business name and year   |
+| **SEO Keywords** | Relevant keywords for search engine optimization    |
+
+This data is invisible to people viewing the photo but readable by search engines, Google Maps, and other platforms.
+
+---
+
+## 🎯 Why Geotag Your Photos?
+
+### Google Business Profile
+
+Adding location data to your photos before uploading to Google Business Profile helps Google understand exactly where your business is. This can improve your ranking on:
+
+- **Google Maps** — Show up when people search near your location
+- **Local Search** — Appear in "near me" searches
+- **Google Images** — Your photos can rank in image search results
+
+### Website Photos
+
+Photos on your website with embedded GPS data reinforce your business location to search engines, helping with local SEO.
+
+### Best Photos to Geotag
+
+1. 🏪 **Storefront** — Tag with your exact business address
+2. 🔧 **Job site / service photos** — Tag with the location where you did the work
+3. 👥 **Team photos** — Tag with your office location
+4. 📦 **Product photos** — Tag with your business location
+
+---
+
+## 🏗️ Technical Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│              How You Use It                          │
+├─────────────┬─────────────────┬─────────────────────┤
+│  🌐 Web App │  🤖 AI Agent    │  💻 Local Install   │
+│  (Browser)  │  (MCP Protocol) │  (Your Computer)    │
+└──────┬──────┴────────┬────────┴──────────┬──────────┘
+       │               │                   │
+       ▼               ▼                   ▼
+┌──────────────┐ ┌──────────────┐  ┌──────────────────┐
+│ Netlify App  │ │ Client MCP   │  │ Local MCP Server  │
+│ (Web + API)  │ │   Server     │  │ + ExifTool        │
+└──────┬───────┘ └──────┬───────┘  └──────────────────┘
+       │                │
+       ▼                ▼
+┌────────────────────────────────┐
+│     Trigger.dev Cloud Tasks    │
+│  (Geocoding + ExifTool + GPS)  │
+└────────────────────────────────┘
 ```
 
 ---
 
-## 📋 Step-by-Step Usage Guide
+## 🔧 For Developers
 
-### Step 1: Prepare Your Data
-
-You'll need:
-- **Photo file path** - Absolute path to your image (e.g., `/Users/you/photos/storefront.jpg`)
-- **Business address** - Your business location (e.g., `123 Main St, Seattle, WA 98101`)
-- **Business name** - For copyright/creator fields (e.g., `Acme Plumbing`)
-- **Keywords** (optional) - SEO keywords like `["plumber", "seattle", "water heater"]`
-
-### Step 2: Use with AI Assistant
-
-Once configured, ask your AI assistant:
-
-> "Geotag my photo at /Users/me/photos/job-site.jpg with address 123 Main St, Seattle, WA for my business Acme Plumbing"
-
-The AI will call the `add_geotag` tool automatically.
-
-### Step 3: Verify the Result
-
-Check metadata was written:
-```bash
-exiftool -a -G /path/to/your/photo.jpg | grep -E "GPS|City|Artist|Copyright"
-```
-
----
-
-## 🛠️ Available Tools
-
-### `add_geotag`
-
-Add GPS and location metadata to a single photo.
-
-```javascript
-// Using address (auto-geocoded)
-{
-  "file_path": "/path/to/photo.jpg",
-  "address": "123 Main Street, Seattle, WA 98101",
-  "business_name": "Acme Plumbing",
-  "keywords": ["plumber", "seattle", "emergency repair"]
-}
-
-// Using coordinates
-{
-  "file_path": "/path/to/photo.jpg",
-  "latitude": 47.6062,
-  "longitude": -122.3321,
-  "city": "Seattle",
-  "state": "Washington",
-  "country": "United States"
-}
-```
-
-### `geocode_address`
-
-Convert an address to GPS coordinates.
-
-```javascript
-{
-  "address": "Space Needle, Seattle, WA"
-}
-// Returns: { latitude: 47.6205, longitude: -122.3493, city: "Seattle", ... }
-```
-
-### `reverse_geocode`
-
-Get address from GPS coordinates.
-
-```javascript
-{
-  "latitude": 47.6205,
-  "longitude": -122.3493
-}
-// Returns: { address: "400 Broad St, Seattle, WA 98109, United States", ... }
-```
-
-### `rename_for_seo`
-
-Rename photos using SEO best practices.
-
-```javascript
-{
-  "file_path": "/photos/IMG_1234.jpg",
-  "business_name": "Acme Plumbing",
-  "service": "water heater installation",
-  "city": "Seattle",
-  "state": "WA"
-}
-// Result: acme-plumbing-water-heater-installation-seattle-wa.jpg
-```
-
-### `batch_geotag`
-
-Process multiple photos in a directory.
-
-```javascript
-{
-  "directory": "/path/to/photos",
-  "address": "123 Main St, Seattle, WA",
-  "business_name": "Acme Plumbing",
-  "recursive": true,
-  "overwrite_original": false
-}
-```
-
-### `read_geotag`
-
-Read existing location metadata from a photo.
-
-```javascript
-{
-  "file_path": "/path/to/photo.jpg"
-}
-```
-
----
-
-## 🎯 Use Cases for Local SEO
-
-### Google Business Profile Photos
-
-Geotag photos before uploading to your GBP to reinforce location signals:
-
-1. **Storefront photos** - Tag with your exact business address
-2. **Service area photos** - Tag with the location where work was performed
-3. **Team photos** - Tag with your office location
-4. **Product photos** - Tag with your business location
-
-### Website Images
-
-While Google strips EXIF from GBP uploads, your website images retain metadata:
-
-- Geotagged images on your website reinforce local relevance
-- Search engines can use location data for image search results
-- Third-party sites that embed your images preserve the geotags
-
-### Social Media
-
-Many social platforms preserve EXIF data, helping with local discovery.
-
----
-
-## 📊 What Metadata is Added?
-
-| Category | Fields Written |
-|----------|----------------|
-| **GPS** | GPSLatitude, GPSLongitude, GPSLatitudeRef, GPSLongitudeRef, GPSAltitude |
-| **IPTC** | City, Province-State, Country-PrimaryLocationName, Sub-location, By-line, CopyrightNotice, Keywords |
-| **XMP** | City, State, Country, Location, Creator, Rights, Subject |
-| **EXIF** | Artist, Copyright |
-
----
-
-## 🔧 Development
+<details>
+<summary>Development commands (click to expand)</summary>
 
 ```bash
-# Run in development mode
+# Run local MCP in development mode
 npm run dev
+
+# Run cloud client MCP server
+npm run start:client
 
 # Run tests
 npm test
@@ -284,23 +393,25 @@ npm run build
 npx @modelcontextprotocol/inspector node dist/index.js
 ```
 
+</details>
+
 ---
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file.
+MIT License — free to use, modify, and share. See [LICENSE](LICENSE) file.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions! Here's how:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. **Fork** this repository
+2. **Create** a feature branch (`git checkout -b feature/YourFeature`)
+3. **Commit** your changes (`git commit -m 'Add YourFeature'`)
+4. **Push** to the branch (`git push origin feature/YourFeature`)
+5. **Open** a Pull Request
 
 ---
 
@@ -308,22 +419,23 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 [Boost Business AI](https://boostbusiness.ai) provides custom AI solutions for local businesses, helping them leverage AI tools to improve their online visibility and customer engagement.
 
-**Need help with your local SEO?** Contact us for custom solutions tailored to your business.
+**Need help with your local SEO?** [Contact us](mailto:anton@boostbusiness.ai) for custom solutions tailored to your business.
 
 ---
 
-## 🔗 Related Resources
+## 🔗 Helpful Links
 
-- [Model Context Protocol](https://modelcontextprotocol.io) - The MCP specification
-- [ExifTool](https://exiftool.org) - The metadata tool powering this server
-- [OpenStreetMap Nominatim](https://nominatim.org) - Free geocoding service used
-
----
-
-## ⭐ Star History
-
-If this project helps your business, please give it a ⭐ on GitHub!
+- [Model Context Protocol (MCP)](https://modelcontextprotocol.io) — The standard that connects AI to tools
+- [Trigger.dev](https://trigger.dev) — Cloud infrastructure powering the backend
+- [ExifTool](https://exiftool.org) — The tool that reads/writes photo metadata
+- [OpenStreetMap Nominatim](https://nominatim.org) — Free geocoding service used for address lookups
 
 ---
 
-**Keywords**: MCP, Model Context Protocol, geotag, geotagging, EXIF, GPS, photo metadata, Google Business Profile, GBP, local SEO, image optimization, location metadata, IPTC, XMP, photo SEO, local business, Google Maps
+## ⭐ Found This Useful?
+
+If this tool helps your business, please give it a ⭐ on GitHub — it helps others find it too!
+
+---
+
+**Keywords**: geotag, geotagging, EXIF, GPS, photo metadata, Google Business Profile, GBP, local SEO, image optimization, location metadata, MCP, Model Context Protocol, AI agent tools

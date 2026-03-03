@@ -1,0 +1,9 @@
+{
+  "name": "gbp-photo-geotag-mcp-remote",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@netlify/functions": "^3.0.0"
+  }
+}

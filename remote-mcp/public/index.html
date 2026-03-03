@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GBP Photo Geotag — Add Location Metadata to Your Photos</title>
+  <meta name="description" content="Add GPS coordinates and SEO-optimized location metadata to your business photos. Boost your Google Business Profile visibility with geotagged images.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ─── Dark Theme (default) ──────────────────────────────────────── */
+    [data-theme="dark"] {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface-2: #1a1a28;
+      --border: rgba(255,255,255,0.06);
+      --border-glow: rgba(99,102,241,0.3);
+      --text: #e4e4e7;
+      --text-muted: #71717a;
+      --accent: #6366f1;
+      --accent-glow: rgba(99,102,241,0.15);
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --gradient: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+      --bg-orb-1: rgba(99,102,241,0.05);
+      --bg-orb-2: rgba(139,92,246,0.04);
+      --shadow-card: 0 2px 12px rgba(0,0,0,0.2);
+      --upload-bg: rgba(99,102,241,0.08);
+      --upload-hover: rgba(99,102,241,0.12);
+      --file-bg: rgba(16,185,129,0.05);
+      --before-bg: rgba(245,158,11,0.06);
+      --before-border: rgba(245,158,11,0.1);
+      --after-bg: rgba(16,185,129,0.06);
+      --after-border: rgba(16,185,129,0.1);
+      --success-bg: rgba(16,185,129,0.08);
+      --success-border: rgba(16,185,129,0.2);
+      --error-bg: rgba(239,68,68,0.08);
+      --error-border: rgba(239,68,68,0.2);
+      --preview-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      --toggle-bg: var(--surface-2);
+    }
+
+    /* ─── Light Theme ───────────────────────────────────────────────── */
+    [data-theme="light"] {
+      --bg: #f8f9fc;
+      --surface: #ffffff;
+      --surface-2: #f0f1f5;
+      --border: rgba(0,0,0,0.08);
+      --border-glow: rgba(99,102,241,0.25);
+      --text: #1a1a2e;
+      --text-muted: #6b7280;
+      --accent: #5b5eea;
+      --accent-glow: rgba(99,102,241,0.1);
+      --success: #059669;
+      --error: #dc2626;
+      --warning: #d97706;
+      --gradient: linear-gradient(135deg, #5b5eea, #7c3aed, #8b5cf6);
+      --bg-orb-1: rgba(99,102,241,0.04);
+      --bg-orb-2: rgba(139,92,246,0.03);
+      --shadow-card: 0 2px 12px rgba(0,0,0,0.06);
+      --upload-bg: rgba(99,102,241,0.04);
+      --upload-hover: rgba(99,102,241,0.08);
+      --file-bg: rgba(16,185,129,0.04);
+      --before-bg: rgba(245,158,11,0.05);
+      --before-border: rgba(245,158,11,0.15);
+      --after-bg: rgba(16,185,129,0.05);
+      --after-border: rgba(16,185,129,0.15);
+      --success-bg: rgba(16,185,129,0.06);
+      --success-border: rgba(16,185,129,0.2);
+      --error-bg: rgba(239,68,68,0.06);
+      --error-border: rgba(239,68,68,0.2);
+      --preview-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      --toggle-bg: var(--surface-2);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.4s, color 0.3s;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at 30% 20%, var(--bg-orb-1) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 80%, var(--bg-orb-2) 0%, transparent 50%);
+      animation: bgFloat 20s ease-in-out infinite alternate;
+      z-index: -1;
+      transition: background 0.4s;
+    }
+    @keyframes bgFloat { to { transform: translate(5%, 3%) rotate(2deg); } }
+
+    .container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ─── Theme Toggle ──────────────────────────────────────────────── */
+    .theme-toggle {
+      position: fixed; top: 1.25rem; right: 1.25rem; z-index: 100;
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; transition: all 0.3s;
+      box-shadow: var(--shadow-card);
+    }
+    .theme-toggle:hover {
+      border-color: var(--border-glow); transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(99,102,241,0.15);
+    }
+    [data-theme="dark"] .theme-toggle .icon-sun { display: inline; }
+    [data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+    [data-theme="light"] .theme-toggle .icon-sun { display: none; }
+    [data-theme="light"] .theme-toggle .icon-moon { display: inline; }
+
+    /* ─── Header ────────────────────────────────────────────────────── */
+    header { text-align: center; padding: 3rem 0 2rem; }
+    .logo {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.85rem; font-weight: 600; color: var(--accent);
+      letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .logo-dot {
+      width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
+      box-shadow: 0 0 12px var(--accent); animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    h1 {
+      font-size: 2.5rem; font-weight: 800;
+      background: var(--gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+      line-height: 1.2; margin-bottom: 0.75rem;
+    }
+    .subtitle {
+      font-size: 1.05rem; color: var(--text-muted); line-height: 1.6;
+      max-width: 540px; margin: 0 auto;
+    }
+
+    /* ─── Card ──────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem;
+      transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+      box-shadow: var(--shadow-card);
+    }
+    .card:hover { border-color: var(--border-glow); }
+    .card-title {
+      font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 1.25rem;
+    }
+
+    /* ─── Upload Area ───────────────────────────────────────────────── */
+    .upload-area {
+      border: 2px dashed rgba(99,102,241,0.25); border-radius: 12px;
+      padding: 2.5rem 1.5rem; text-align: center; cursor: pointer;
+      transition: all 0.3s; background: var(--upload-bg);
+      position: relative; overflow: hidden;
+    }
+    .upload-area:hover, .upload-area.dragover {
+      border-color: var(--accent); background: var(--upload-hover);
+      transform: translateY(-1px);
+    }
+    .upload-area.has-file { border-color: var(--success); background: var(--file-bg); }
+    .upload-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .upload-text { font-weight: 500; margin-bottom: 0.25rem; }
+    .upload-hint { font-size: 0.85rem; color: var(--text-muted); }
+    .upload-preview {
+      max-width: 200px; max-height: 150px; border-radius: 8px;
+      margin-top: 1rem; box-shadow: var(--preview-shadow);
+    }
+    input[type="file"] { display: none; }
+
+    /* ─── Metadata Panel ────────────────────────────────────────────── */
+    .metadata-panel {
+      margin-top: 1.25rem; border-radius: 10px;
+      border: 1px solid var(--border); overflow: hidden;
+      display: none; transition: border-color 0.3s;
+    }
+    .metadata-panel.visible { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .metadata-header {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1rem; font-size: 0.78rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .metadata-header.before-header {
+      background: var(--before-bg); color: var(--warning);
+      border-bottom: 1px solid var(--before-border);
+    }
+    .metadata-header.after-header {
+      background: var(--after-bg); color: var(--success);
+      border-bottom: 1px solid var(--after-border);
+    }
+    .metadata-header .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .metadata-header.before-header .dot { background: var(--warning); }
+    .metadata-header.after-header .dot { background: var(--success); }
+
+    .metadata-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .meta-field {
+      padding: 0.6rem 1rem; border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+    .meta-field:nth-child(odd) { border-right: 1px solid var(--border); }
+    .meta-label {
+      font-size: 0.7rem; font-weight: 500; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.15rem;
+    }
+    .meta-value { font-weight: 500; word-break: break-word; }
+    .meta-value.empty { color: var(--text-muted); opacity: 0.5; font-style: italic; font-weight: 400; }
+    .meta-value.has-data { color: var(--success); }
+
+    .metadata-scanning {
+      padding: 1rem; text-align: center; font-size: 0.85rem; color: var(--text-muted);
+    }
+    .metadata-scanning .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+      margin-right: 0.5rem; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Comparison ────────────────────────────────────────────────── */
+    .comparison { display: none; }
+    .comparison.visible { display: block; animation: fadeIn 0.5s ease; }
+    .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .comparison-col .metadata-panel { display: block; margin-top: 0; }
+
+    /* ─── Form ──────────────────────────────────────────────────────── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+    input[type="text"], textarea {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.7rem 0.9rem; color: var(--text);
+      font-family: inherit; font-size: 0.9rem;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.3s; outline: none;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); opacity: 0.5; }
+
+    /* ─── Submit Button ─────────────────────────────────────────────── */
+    .submit-btn {
+      width: 100%; padding: 0.9rem; background: var(--gradient);
+      border: none; border-radius: 10px; color: #fff;
+      font-family: inherit; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-1px); box-shadow: 0 8px 24px rgba(99,102,241,0.3);
+    }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .submit-btn.processing { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); }
+
+    /* ─── Progress ──────────────────────────────────────────────────── */
+    .progress-bar {
+      height: 3px; background: var(--surface-2); border-radius: 3px;
+      overflow: hidden; margin-top: 1rem; display: none;
+    }
+    .progress-bar.visible { display: block; }
+    .progress-fill {
+      height: 100%; background: var(--gradient); border-radius: 3px;
+      width: 0%; transition: width 0.5s ease; animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
+
+    /* ─── Status ────────────────────────────────────────────────────── */
+    .status {
+      text-align: center; padding: 1rem; border-radius: 10px;
+      margin-top: 1rem; font-size: 0.9rem; display: none;
+    }
+    .status.visible { display: block; }
+    .status.success { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success); }
+    .status.error { background: var(--error-bg); border: 1px solid var(--error-border); color: var(--error); }
+
+    /* ─── Steps ─────────────────────────────────────────────────────── */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-top: 2rem; }
+    .step {
+      text-align: center; padding: 1.25rem 0.75rem; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 12px;
+      transition: border-color 0.3s, transform 0.3s, background 0.3s;
+      box-shadow: var(--shadow-card);
+    }
+    .step:hover { border-color: var(--border-glow); transform: translateY(-2px); }
+    .step-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; background: var(--gradient);
+      border-radius: 50%; font-size: 0.75rem; font-weight: 700;
+      color: #fff; margin-bottom: 0.6rem;
+    }
+    .step-title { font-weight: 600; font-size: 0.82rem; margin-bottom: 0.2rem; }
+    .step-desc { font-size: 0.72rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ─── Options / Footer ──────────────────────────────────────────── */
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+    .option-card {
+      padding: 1.25rem; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; text-decoration: none; color: var(--text);
+      transition: all 0.3s; box-shadow: var(--shadow-card);
+    }
+    .option-card:hover { border-color: var(--border-glow); transform: translateY(-2px); }
+    .option-emoji { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .option-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .option-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+    footer { text-align: center; padding: 3rem 0 2rem; color: var(--text-muted); font-size: 0.8rem; }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── Responsive ────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      h1 { font-size: 1.8rem; }
+      .form-grid, .comparison-grid, .metadata-grid { grid-template-columns: 1fr; }
+      .meta-field:nth-child(odd) { border-right: none; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .options { grid-template-columns: 1fr; }
+      .card { padding: 1.5rem; }
+      .theme-toggle { top: 0.75rem; right: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+  <span class="icon-sun">☀️</span>
+  <span class="icon-moon">🌙</span>
+</button>
+
+<div class="container">
+  <header>
+    <div class="logo"><div class="logo-dot"></div> GBP Photo Geotag</div>
+    <h1>Add Location Data to Your Photos</h1>
+    <p class="subtitle">Upload your business photo, add your address, and download it with embedded GPS coordinates &amp; SEO metadata — perfect for Google Business Profile.</p>
+  </header>
+
+  <!-- How it works -->
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">Upload</div>
+      <div class="step-desc">Drop your business photo</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">Scan</div>
+      <div class="step-desc">See existing metadata</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">Geotag</div>
+      <div class="step-desc">Add location &amp; SEO data</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-title">Download</div>
+      <div class="step-desc">Before/after comparison</div>
+    </div>
+  </div>
+
+  <!-- Upload Card -->
+  <div class="card" style="margin-top: 2rem;">
+    <div class="card-title">📸 Your Photo</div>
+    <div class="upload-area" id="uploadArea">
+      <div class="upload-icon">📍</div>
+      <div class="upload-text">Drop your image here or click to browse</div>
+      <div class="upload-hint">Supports JPG, PNG, TIFF, WebP, HEIC</div>
+      <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.tiff,.tif,.webp,.heic">
+      <img class="upload-preview" id="preview" style="display:none" alt="Preview">
+    </div>
+
+    <!-- Current metadata (shown after upload) -->
+    <div class="metadata-panel" id="beforePanel">
+      <div class="metadata-header before-header">
+        <div class="dot"></div>
+        Current Metadata (Before)
+      </div>
+      <div id="beforeContent">
+        <div class="metadata-scanning">
+          <span class="spinner"></span> Scanning image metadata...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location Card -->
+  <div class="card">
+    <div class="card-title">📍 Location Information</div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label for="address">Street Address *</label>
+        <input type="text" id="address" placeholder="e.g., 123 Main Street, Seattle, WA 98101">
+      </div>
+      <div class="form-group">
+        <label for="city">City (auto-filled)</label>
+        <input type="text" id="city" placeholder="Auto-detected from address">
+      </div>
+      <div class="form-group">
+        <label for="state">State (auto-filled)</label>
+        <input type="text" id="state" placeholder="Auto-detected from address">
+      </div>
+    </div>
+  </div>
+
+  <!-- Business Card -->
+  <div class="card">
+    <div class="card-title">🏢 Business Information</div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label for="businessName">Business Name</label>
+        <input type="text" id="businessName" placeholder="e.g., Acme Plumbing">
+      </div>
+      <div class="form-group full">
+        <label for="keywords">SEO Keywords (comma-separated)</label>
+        <input type="text" id="keywords" placeholder="e.g., plumber, seattle, emergency repair">
+      </div>
+      <div class="form-group full">
+        <label for="copyright">Copyright Notice</label>
+        <input type="text" id="copyright" placeholder="e.g., © 2026 Acme Plumbing (auto-generated if empty)">
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <button class="submit-btn" id="submitBtn" onclick="processImage()">
+    ✨ Geotag &amp; Download Photo
+  </button>
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="status" id="status"></div>
+
+  <!-- Before/After comparison (shown after geotagging) -->
+  <div class="comparison" id="comparison">
+    <div class="card" style="margin-top: 1.5rem;">
+      <div class="card-title">🔄 Before / After Comparison</div>
+      <div class="comparison-grid">
+        <div class="comparison-col">
+          <div class="metadata-panel" style="display:block;">
+            <div class="metadata-header before-header">
+              <div class="dot"></div> Before
+            </div>
+            <div id="comparisonBefore"></div>
+          </div>
+        </div>
+        <div class="comparison-col">
+          <div class="metadata-panel" style="display:block;">
+            <div class="metadata-header after-header">
+              <div class="dot"></div> After
+            </div>
+            <div id="comparisonAfter"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Other Options -->
+  <div class="options">
+    <a href="https://github.com/antongulin/gbp-photo-geotag-mcp" class="option-card" target="_blank">
+      <div class="option-emoji">💻</div>
+      <div class="option-title">Run Locally</div>
+      <div class="option-desc">Download from GitHub &amp; use with your own AI agent via MCP</div>
+    </a>
+    <a href="https://github.com/antongulin/gbp-photo-geotag-mcp#-cloud-mcp-recommended" class="option-card" target="_blank">
+      <div class="option-emoji">🤖</div>
+      <div class="option-title">MCP for AI Agents</div>
+      <div class="option-desc">Install in Claude, Cursor, or any MCP-compatible agent</div>
+    </a>
+  </div>
+
+  <footer>
+    Built by <a href="https://boostbusiness.ai" target="_blank">Boost Business AI</a> · <a href="https://github.com/antongulin/gbp-photo-geotag-mcp" target="_blank">GitHub</a> · Open Source (MIT)
+  </footer>
+</div>
+
+<script>
+  // ─── Theme toggle ──────────────────────────────────────────────────
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('gbp-theme', next);
+  }
+
+  // Restore saved theme or respect OS preference
+  (function() {
+    const saved = localStorage.getItem('gbp-theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  })();
+
+  // ─── App State ─────────────────────────────────────────────────────
+  let selectedFile = null;
+  let fileBase64 = null;
+  let beforeMetadata = null;
+
+  const METADATA_FIELDS = [
+    { key: 'GPS Latitude', aliases: ['GPSLatitude', 'GPS:GPSLatitude', 'EXIF:GPSLatitude'] },
+    { key: 'GPS Longitude', aliases: ['GPSLongitude', 'GPS:GPSLongitude', 'EXIF:GPSLongitude'] },
+    { key: 'City', aliases: ['City', 'IPTC:City', 'XMP:City'] },
+    { key: 'State', aliases: ['State', 'Province-State', 'IPTC:Province-State', 'XMP:State'] },
+    { key: 'Country', aliases: ['Country', 'Country-PrimaryLocationName', 'IPTC:Country-PrimaryLocationName', 'XMP:Country'] },
+    { key: 'Location', aliases: ['Location', 'Sub-location', 'IPTC:Sub-location', 'XMP:Location'] },
+    { key: 'Artist', aliases: ['Artist', 'EXIF:Artist', 'By-line', 'IPTC:By-line', 'XMP:Creator'] },
+    { key: 'Copyright', aliases: ['Copyright', 'EXIF:Copyright', 'CopyrightNotice', 'IPTC:CopyrightNotice', 'XMP:Rights'] },
+    { key: 'Keywords', aliases: ['Keywords', 'IPTC:Keywords', 'XMP:Subject', 'Subject'] },
+  ];
+
+  function findMetaValue(metadata, field) {
+    if (!metadata) return null;
+    for (const alias of field.aliases) {
+      for (const [key, val] of Object.entries(metadata)) {
+        if (key === alias || key.endsWith(':' + alias) || key.includes(alias)) return val;
+      }
+    }
+    return null;
+  }
+
+  function renderMetadataGrid(metadata, targetEl) {
+    let html = '<div class="metadata-grid">';
+    for (const field of METADATA_FIELDS) {
+      const val = findMetaValue(metadata, field);
+      const displayVal = val !== null && val !== undefined && val !== '' ? String(val) : null;
+      html += `
+        <div class="meta-field">
+          <div class="meta-label">${field.key}</div>
+          <div class="meta-value ${displayVal ? 'has-data' : 'empty'}">
+            ${displayVal || 'No data'}
+          </div>
+        </div>`;
+    }
+    html += '</div>';
+    targetEl.innerHTML = html;
+  }
+
+  // ─── Upload ────────────────────────────────────────────────────────
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInput = document.getElementById('fileInput');
+  const preview = document.getElementById('preview');
+
+  uploadArea.addEventListener('click', () => fileInput.click());
+  uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+  uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault(); uploadArea.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) handleFile(e.target.files[0]);
+  });
+
+  function handleFile(file) {
+    selectedFile = file;
+    uploadArea.classList.add('has-file');
+    uploadArea.querySelector('.upload-text').textContent = file.name;
+    uploadArea.querySelector('.upload-hint').textContent =
+      `${(file.size / 1024).toFixed(0)} KB · ${file.type || 'image'}`;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      fileBase64 = e.target.result.split(',')[1];
+      scanMetadata();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ─── Scan Metadata ─────────────────────────────────────────────────
+  async function scanMetadata() {
+    const panel = document.getElementById('beforePanel');
+    const content = document.getElementById('beforeContent');
+    panel.classList.add('visible');
+    content.innerHTML = '<div class="metadata-scanning"><span class="spinner"></span> Scanning image metadata...</div>';
+    try {
+      const response = await fetch('/api/geotag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'read-geotag', image_base64: fileBase64, filename: selectedFile.name }),
+      });
+      const result = await response.json();
+      if (result.success && result.metadata) {
+        beforeMetadata = result.metadata;
+        renderMetadataGrid(result.metadata, content);
+      } else {
+        beforeMetadata = {};
+        renderMetadataGrid({}, content);
+      }
+    } catch (err) {
+      beforeMetadata = {};
+      content.innerHTML = '<div class="metadata-scanning" style="color: var(--text-muted);">⚠️ Could not scan metadata — will still process your image</div>';
+    }
+  }
+
+  // ─── Process Image ─────────────────────────────────────────────────
+  async function processImage() {
+    const address = document.getElementById('address').value.trim();
+    const statusEl = document.getElementById('status');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (!selectedFile || !fileBase64) { showStatus('Please upload an image first', 'error'); return; }
+    if (!address) { showStatus('Please enter a street address', 'error'); return; }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ Processing...';
+    submitBtn.classList.add('processing');
+    progressBar.classList.add('visible');
+    statusEl.classList.remove('visible');
+    document.getElementById('comparison').classList.remove('visible');
+
+    progressFill.style.width = '20%';
+    setTimeout(() => progressFill.style.width = '50%', 500);
+    setTimeout(() => progressFill.style.width = '75%', 1500);
+
+    try {
+      const payload = {
+        action: 'geotag',
+        image_base64: fileBase64,
+        filename: selectedFile.name,
+        address,
+        city: document.getElementById('city').value.trim() || undefined,
+        state: document.getElementById('state').value.trim() || undefined,
+        business_name: document.getElementById('businessName').value.trim() || undefined,
+        copyright: document.getElementById('copyright').value.trim() || undefined,
+        keywords: document.getElementById('keywords').value.trim()
+          ? document.getElementById('keywords').value.split(',').map(k => k.trim()).filter(Boolean) : undefined,
+      };
+
+      const response = await fetch('/api/geotag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+      progressFill.style.width = '100%';
+
+      if (!response.ok || !result.success) throw new Error(result.error || result.message || 'Processing failed');
+
+      // Download processed image
+      const binaryStr = atob(result.processed_image.base64);
+      const bytes = new Uint8Array(binaryStr.length);
+      for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+      const blob = new Blob([bytes], { type: result.processed_image.mime_type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `geotagged-${selectedFile.name}`;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // Build "after" metadata
+      const loc = result.location;
+      const afterMetadata = {
+        'GPS:GPSLatitude': loc.coordinates.latitude,
+        'GPS:GPSLongitude': loc.coordinates.longitude,
+        'IPTC:City': loc.city || '',
+        'IPTC:Province-State': loc.state || '',
+        'IPTC:Country-PrimaryLocationName': loc.country || '',
+        'IPTC:Sub-location': loc.sublocation || '',
+        'EXIF:Artist': payload.business_name || '',
+        'EXIF:Copyright': payload.copyright || (payload.business_name ? `© ${new Date().getFullYear()} ${payload.business_name}` : ''),
+        'IPTC:Keywords': (payload.keywords || []).join(', '),
+      };
+
+      // Show comparison
+      renderMetadataGrid(beforeMetadata || {}, document.getElementById('comparisonBefore'));
+      renderMetadataGrid(afterMetadata, document.getElementById('comparisonAfter'));
+      document.getElementById('comparison').classList.add('visible');
+
+      showStatus(
+        `✅ Photo geotagged and downloaded! GPS: ${loc.coordinates.latitude.toFixed(4)}, ${loc.coordinates.longitude.toFixed(4)} · ${(result.processed_image.size_bytes / 1024).toFixed(0)} KB`,
+        'success'
+      );
+      document.getElementById('comparison').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (err) {
+      showStatus(`❌ ${err.message}`, 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = '✨ Geotag & Download Photo';
+      submitBtn.classList.remove('processing');
+      setTimeout(() => { progressBar.classList.remove('visible'); progressFill.style.width = '0%'; }, 1000);
+    }
+  }
+
+  function showStatus(msg, type) {
+    const el = document.getElementById('status');
+    el.innerHTML = msg;
+    el.className = `status visible ${type}`;
+  }
+</script>
+
+</body>
+</html>
