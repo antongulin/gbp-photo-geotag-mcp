@@ -40,7 +40,10 @@ async function waitForRun(apiKey, runId) {
     }
 
     // Any other non-2xx is a real error (auth, bad request, etc.)
-    if (!response.ok) throw new Error(`Poll error: ${response.status}`);
+    if (!response.ok) {
+      await response.body?.cancel();
+      throw new Error(`Poll error: ${response.status}`);
+    }
     const run = await response.json();
     if (run.status === "COMPLETED") return run.output;
     if (["FAILED", "CRASHED", "SYSTEM_FAILURE", "CANCELED", "TIMED_OUT", "EXPIRED"].includes(run.status)) {
