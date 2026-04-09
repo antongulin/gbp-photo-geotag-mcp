@@ -34,6 +34,7 @@ async function waitForRun(apiKey, runId) {
     // - 404: eventual-consistency window right after run creation
     // - 5xx: Trigger.dev upstream transient failure
     if (response.status === 404 || response.status >= 500) {
+      await response.body?.cancel();
       await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
       continue;
     }
