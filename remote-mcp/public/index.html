@@ -587,7 +587,7 @@
     panel.classList.add('visible');
     content.innerHTML = '<div class="metadata-scanning"><span class="spinner"></span> Scanning image metadata...</div>';
     try {
-      const response = await fetch('/api/geotag', {
+      const response = await fetch('/api/web-geotag', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'read-geotag', image_base64: fileBase64, filename: selectedFile.name }),
@@ -642,7 +642,7 @@
           ? document.getElementById('keywords').value.split(',').map(k => k.trim()).filter(Boolean) : undefined,
       };
 
-      const response = await fetch('/api/geotag', {
+      const response = await fetch('/api/web-geotag', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

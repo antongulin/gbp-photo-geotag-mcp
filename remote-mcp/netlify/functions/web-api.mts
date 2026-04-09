@@ -1,21 +1,20 @@
 import type { Context, Config } from "@netlify/functions";
 
-/** Constant-time string comparison to prevent timing-based key leaks. */
-function safeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
-
 /**
- * API endpoint for geotagging photos.
- * Receives image + metadata, calls Trigger.dev task, returns processed image.
+ * Public web-app proxy for /api/geotag.
+ *
+ * Intended to be called ONLY from the web UI bundled in public/.
+ * Unlike /api/geotag (which requires x-api-key), this endpoint is
+ * unauthenticated but restricted by an Origin/Referer allowlist so
+ * casual scripted abuse can't consume Trigger.dev quota through it.
+ *
+ * Origin can be spoofed by non-browser clients — if abuse becomes a
+ * real problem, add per-IP rate limiting via Netlify Blobs here.
  */
 
 const TRIGGER_API_URL = "https://api.trigger.dev";
 const POLL_INTERVAL_MS = 1000;
-const MAX_POLL_SECONDS = 25; // Netlify function timeout safety
+const MAX_POLL_SECONDS = 25;
 
 async function triggerTask(apiKey, taskId, payload) {
   const response = await fetch(`${TRIGGER_API_URL}/api/v1/tasks/${taskId}/trigger`, {
@@ -62,12 +61,51 @@ async function waitForRun(apiKey, runId) {
   throw new Error("Task timed out");
 }
 
+/**
+ * Build the set of allowed origins. Pulls from ALLOWED_ORIGINS env var
+ * (comma-separated) if set, otherwise falls back to Netlify's built-in
+ * URL / DEPLOY_PRIME_URL / DEPLOY_URL so deploy previews Just Work.
+ */
+function getAllowedOrigins(): string[] {
+  const explicit = Netlify.env.get("ALLOWED_ORIGINS");
+  if (explicit) {
+    return explicit.split(",").map((o) => o.trim()).filter(Boolean);
+  }
+  const netlifyOrigins = [
+    Netlify.env.get("URL"),
+    Netlify.env.get("DEPLOY_PRIME_URL"),
+    Netlify.env.get("DEPLOY_URL"),
+  ].filter((o): o is string => !!o);
+  return netlifyOrigins;
+}
+
+function isAllowedOrigin(req: Request): boolean {
+  const allowed = getAllowedOrigins();
+  if (allowed.length === 0) return false;
+
+  // Prefer Origin header (set on all cross-origin and same-origin POSTs
+  // by modern browsers). Fall back to Referer for older/edge clients.
+  const origin = req.headers.get("origin");
+  if (origin && allowed.includes(origin)) return true;
+
+  const referer = req.headers.get("referer");
+  if (referer) {
+    try {
+      const refererOrigin = new URL(referer).origin;
+      if (allowed.includes(refererOrigin)) return true;
+    } catch {
+      // Malformed referer — fall through to reject
+    }
+  }
+
+  return false;
+}
+
 export default async (req: Request, context: Context) => {
-  // CORS headers
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, x-api-key",
+    "Access-Control-Allow-Headers": "Content-Type",
   };
 
   if (req.method === "OPTIONS") {
@@ -78,20 +116,13 @@ export default async (req: Request, context: Context) => {
     return new Response("Method not allowed", { status: 405, headers: corsHeaders });
   }
 
-  // API key authentication — must run before any body parsing or Trigger.dev calls
-  // so unauthenticated requests never consume downstream quota.
-  const expectedApiKey = Netlify.env.get("API_KEY");
-  if (!expectedApiKey) {
+  // Origin check — reject if the request doesn't come from our own web UI.
+  // Spoofable by non-browser clients; this is a casual-abuse deterrent, not
+  // a security boundary. /api/geotag (with x-api-key) is the real API surface.
+  if (!isAllowedOrigin(req)) {
     return new Response(
-      JSON.stringify({ error: "Server misconfigured: missing API_KEY" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-  const providedApiKey = req.headers.get("x-api-key");
-  if (!providedApiKey || !safeEqual(providedApiKey, expectedApiKey)) {
-    return new Response(
-      JSON.stringify({ error: "Unauthorized" }),
-      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ error: "Forbidden" }),
+      { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 
@@ -101,7 +132,7 @@ export default async (req: Request, context: Context) => {
 
     if (!apiKey) {
       return new Response(
-        JSON.stringify({ error: "Server misconfigured: missing API key" }),
+        JSON.stringify({ error: "Server misconfigured: missing Trigger.dev key" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -148,5 +179,5 @@ export default async (req: Request, context: Context) => {
 };
 
 export const config: Config = {
-  path: "/api/geotag",
+  path: "/api/web-geotag",
 };
