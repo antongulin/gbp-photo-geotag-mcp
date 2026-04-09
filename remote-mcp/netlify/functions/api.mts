@@ -1,5 +1,13 @@
 import type { Context, Config } from "@netlify/functions";
 
+/** Constant-time string comparison to prevent timing-based key leaks. */
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 /**
  * API endpoint for geotagging photos.
  * Receives image + metadata, calls Trigger.dev task, returns processed image.
@@ -80,7 +88,7 @@ export default async (req: Request, context: Context) => {
     );
   }
   const providedApiKey = req.headers.get("x-api-key");
-  if (!providedApiKey || providedApiKey !== expectedApiKey) {
+  if (!providedApiKey || !safeEqual(providedApiKey, expectedApiKey)) {
     return new Response(
       JSON.stringify({ error: "Unauthorized" }),
       { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
