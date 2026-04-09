@@ -59,7 +59,7 @@ export default async (req: Request, context: Context) => {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, x-api-key",
   };
 
   if (req.method === "OPTIONS") {
@@ -68,6 +68,23 @@ export default async (req: Request, context: Context) => {
 
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405, headers: corsHeaders });
+  }
+
+  // API key authentication — must run before any body parsing or Trigger.dev calls
+  // so unauthenticated requests never consume downstream quota.
+  const expectedApiKey = Netlify.env.get("API_KEY");
+  if (!expectedApiKey) {
+    return new Response(
+      JSON.stringify({ error: "Server misconfigured: missing API_KEY" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+  const providedApiKey = req.headers.get("x-api-key");
+  if (!providedApiKey || providedApiKey !== expectedApiKey) {
+    return new Response(
+      JSON.stringify({ error: "Unauthorized" }),
+      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 
   try {
