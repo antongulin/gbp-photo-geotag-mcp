@@ -29,7 +29,21 @@ async function waitForRun(apiKey, runId) {
     const response = await fetch(`${TRIGGER_API_URL}/api/v1/runs/${runId}`, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
-    if (!response.ok) throw new Error(`Poll error: ${response.status}`);
+
+    // Retry on transient errors:
+    // - 404: eventual-consistency window right after run creation
+    // - 5xx: Trigger.dev upstream transient failure
+    if (response.status === 404 || response.status >= 500) {
+      await response.body?.cancel();
+      await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+      continue;
+    }
+
+    // Any other non-2xx is a real error (auth, bad request, etc.)
+    if (!response.ok) {
+      await response.body?.cancel();
+      throw new Error(`Poll error: ${response.status}`);
+    }
     const run = await response.json();
     if (run.status === "COMPLETED") return run.output;
     if (["FAILED", "CRASHED", "SYSTEM_FAILURE", "CANCELED", "TIMED_OUT", "EXPIRED"].includes(run.status)) {
