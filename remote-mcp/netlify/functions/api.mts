@@ -34,7 +34,7 @@ async function triggerTask(apiKey, taskId, payload) {
 async function waitForRun(apiKey, runId) {
   const deadline = Date.now() + MAX_POLL_SECONDS * 1000;
   while (Date.now() < deadline) {
-    const response = await fetch(`${TRIGGER_API_URL}/api/v1/runs/${runId}`, {
+    const response = await fetch(`${TRIGGER_API_URL}/api/v3/runs/${runId}`, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
 
