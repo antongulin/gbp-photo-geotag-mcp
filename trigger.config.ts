@@ -19,7 +19,7 @@ export default defineConfig({
     extensions: [
       // Install ExifTool in the deployed Docker container
       aptGet({
-        packages: ["libimage-exiftool-perl"],
+        packages: ["libimage-exiftool-perl", "imagemagick"],
       }),
     ],
   },

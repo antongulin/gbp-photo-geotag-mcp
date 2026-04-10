@@ -21,6 +21,24 @@ async function execExiftool(
   });
 }
 
+// ─── Helper: Execute arbitrary command (e.g. ImageMagick convert) ────────────
+
+async function execCommand(
+  cmd: string,
+  args: string[]
+): Promise<{ stdout: string; stderr: string; code: number }> {
+  return new Promise((resolve, reject) => {
+    const proc = spawn(cmd, args);
+    let stdout = "";
+    let stderr = "";
+
+    proc.stdout.on("data", (data) => (stdout += data.toString()));
+    proc.stderr.on("data", (data) => (stderr += data.toString()));
+    proc.on("close", (code) => resolve({ stdout, stderr, code: code ?? 0 }));
+    proc.on("error", (error) => reject(error));
+  });
+}
+
 // ─── Helper: Download image from URL to temp file ────────────────────────────
 
 async function downloadImage(
@@ -296,10 +314,51 @@ export const geotagPhoto = task({
         };
       }
 
-      // 5. Read the processed image and return as base64
-      const processedBuffer = fs.readFileSync(tmpFile);
+      // 5. Convert to JPEG via ImageMagick if over 4MB (GBP max is 5MB)
+      //    exiftool only copies metadata — it cannot re-encode pixels.
+      //    ImageMagick `convert` does the actual pixel re-encoding to JPEG.
+      //    Then exiftool copies all metadata from the original to the JPEG.
+      let finalFile = tmpFile;
+      const statsBeforeConvert = fs.statSync(tmpFile);
+      const currentExt = path.extname(tmpFile).toLowerCase();
+      const isAlreadySmallJpeg = (currentExt === ".jpg" || currentExt === ".jpeg") && statsBeforeConvert.size <= 4_000_000;
+
+      if (!isAlreadySmallJpeg && statsBeforeConvert.size > 4_000_000) {
+        const jpegFile = tmpFile.replace(/\.[^.]+$/, ".jpg");
+        // Step A: Re-encode pixels to JPEG at 85% quality via ImageMagick
+        const convertResult = await execCommand("convert", [
+          tmpFile, "-quality", "85", jpegFile,
+        ]);
+        if (convertResult.code === 0 && fs.existsSync(jpegFile)) {
+          // Step B: Copy all metadata from geotagged original to the new JPEG
+          const metaCopy = await execExiftool([
+            "-TagsFromFile", tmpFile, "-all:all", "-overwrite_original", jpegFile,
+          ]);
+          const jpegStats = fs.statSync(jpegFile);
+          // Step C: Validate the output isn't broken
+          if (metaCopy.code === 0 && !metaCopy.stderr.includes("Error") && jpegStats.size > 0) {
+            logger.info("Converted to JPEG for GBP size limit", {
+              originalFormat: currentExt,
+              originalSize: statsBeforeConvert.size,
+              jpegSize: jpegStats.size,
+            });
+            finalFile = jpegFile;
+          } else {
+            logger.warn("Metadata copy to JPEG failed, using original", {
+              stderr: metaCopy.stderr,
+            });
+          }
+        } else {
+          logger.warn("ImageMagick conversion failed, using original", {
+            stderr: convertResult.stderr,
+          });
+        }
+      }
+
+      // 6. Read the processed image and return as base64
+      const processedBuffer = fs.readFileSync(finalFile);
       const base64Image = processedBuffer.toString("base64");
-      const ext = path.extname(tmpFile).replace(".", "");
+      const ext = path.extname(finalFile).replace(".", "");
       const mimeType = ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : "image/jpeg";
 
       return {
@@ -313,10 +372,10 @@ export const geotagPhoto = task({
         },
       };
     } finally {
-      // Clean up temp file
-      if (fs.existsSync(tmpFile)) {
-        fs.unlinkSync(tmpFile);
-      }
+      // Clean up temp files
+      if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);
+      const jpegVariant = tmpFile.replace(/\.[^.]+$/, ".jpg");
+      if (jpegVariant !== tmpFile && fs.existsSync(jpegVariant)) fs.unlinkSync(jpegVariant);
     }
   },
 });
