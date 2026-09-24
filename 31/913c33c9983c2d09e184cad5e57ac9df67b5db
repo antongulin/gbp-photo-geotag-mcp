@@ -1,0 +1,29 @@
+AGENTS.md
+  s_b12895f2ce95cf::t_2ec0b3803068a1 1-120
+README.md
+  s_a83220d92e2ca3::t_63503c66cc6ca6 398-409
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "31913c33c9983c2d09e184cad5e57ac9df67b5db",
+  "prompts": {},
+  "sessions": {
+    "s_a83220d92e2ca3": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2e00368cffeMhuZ8UnJPQiPtm",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "Anton Gulin <anton@boostbusiness.ai>"
+    },
+    "s_b12895f2ce95cf": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0d19e-87c8-71b0-80ad-daf8d0273bb0",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Anton Gulin <anton@boostbusiness.ai>"
+    }
+  }
+}
