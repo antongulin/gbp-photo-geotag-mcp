@@ -395,6 +395,18 @@ npx @modelcontextprotocol/inspector node dist/index.js
 
 </details>
 
+### Code intelligence (CodeGraph)
+
+Committed project-local MCP configs (`.mcp.json`, `opencode.jsonc`, `.codex/config.toml`,
+`.cursor/mcp.json`, `.vscode/mcp.json`) wire the local `codegraph` index for the TypeScript sources.
+The index is untracked (`.codegraph/`). See [AGENTS.md](AGENTS.md) for the full developer contract.
+
+```bash
+CODEGRAPH_TELEMETRY=0 codegraph init .     # build the local index once per checkout
+CODEGRAPH_TELEMETRY=0 codegraph status     # confirm "Index is up to date"
+CODEGRAPH_TELEMETRY=0 codegraph query "<symbol>"
+```
+
 ---
 
 ## 📄 License
